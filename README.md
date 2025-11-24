@@ -1,59 +1,97 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Laravel Mini Task Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A simple Task Management application built with Laravel 12.
+Supports user authentication, task CRUD, task reminders via email, and provides both Blade UI and REST API endpoints.
 
-## About Laravel
+Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+User registration and login (Laravel Breeze & Sanctum)
+Task management (Create, Read, Update, Delete)
+Task fields: Title, Description, Status (pending, in-progress, completed), Due Date
+Task filtering by status and due date
+Pagination on task list
+Email reminders for tasks due tomorrow (scheduled job)
+RESTful API for tasks (with JSON responses)
+Role-based access (optional: Admin/User)
+Project Structure
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+app/
+ ├─ Models/
+ │   ├─ Task.php
+ │   └─ User.php
+ ├─ Http/Controllers/
+ │   ├─ API/TaskController.php
+ │   ├─ Web/TaskController.php
+ │   └─ Auth/...
+database/
+ ├─ migrations/
+ │   └─ create_tasks_table.php
+ ├─ seeders/
+ │   └─ DatabaseSeeder.php
+resources/views/
+ ├─ layouts/app.blade.php
+ ├─ tasks/index.blade.php
+ └─ tasks/form.blade.php
+routes/
+ ├─ web.php
+ └─ api.php
+.env.example
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Requirements
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+PHP 8.2+
+Composer
+Node.js + NPM
+MySQL / MariaDB (or any database supported by Laravel)
+Mail service configured for reminders
 
-## Laravel Sponsors
+Installation Steps
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Clone the repository
+cd laravel-mini-task
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Install PHP dependencies
+composer install
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Install Node.js dependencies & build assets
+npm install
+npm run dev
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Copy the environment file and set credentials
+cp .env.example .env
 
-## Security Vulnerabilities
+Run migrations & seed database
+php artisan migrate --seed
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
+Run the local server
+php artisan serve
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Visit: http://127.0.0.1:8000
+
+Register a new user and start managing tasks.
+
+API Endpoints
+Method	Endpoint	Description
+GET	/api/tasks	List all user tasks (paginated)
+POST	/api/tasks	Create a new task
+PUT	/api/tasks/{id}	Update a task
+DELETE	/api/tasks/{id}	Delete a task
+
+Authentication: Bearer token via Sanctum.
+
+Scheduler / Email Reminders
+
+Laravel uses a queued job to send email reminders for tasks due tomorrow.
+
+To run scheduler locally:
+php artisan queue:work
+php artisan schedule:run
+
+Configure mail credentials in .env to enable email delivery.
+
