@@ -3,7 +3,7 @@
 @section('content')
 <h2 class="text-xl font-bold mb-4">{{ isset($task) ? 'Edit Task' : 'Add Task' }}</h2>
 
-<form action="{{ isset($task) ? route('tasks.update', $task) : route('tasks.store') }}"
+<form action="{{ isset($task) ? route('tasks.update', $task->id) : route('tasks.store') }}"
       method="POST"
       class="bg-white p-6 shadow rounded">
     @csrf

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Web;
-
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
@@ -10,65 +8,52 @@ use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
-
 class TaskController extends Controller
 {
     public function index(Request $request)
     {
         $query = $request->user()->tasks()->orderBy('due_date');
 
-
         if ($request->filled('status')) {
-        $query->where('status', $request->status);
+            $query->where('status', $request->status);
         }
         if ($request->filled('due_date')) {
-        $query->whereDate('due_date', $request->due_date);
+            $query->whereDate('due_date', $request->due_date);
         }
 
-
         $tasks = $query->paginate(10)->withQueryString();
-
 
         return view('tasks.index', compact('tasks'));
     }
 
-
     public function create()
     {
-        return view('tasks.form', ['task' => new Task(), 'action' => route('tasks.store'), 'method' => 'POST']);
+        return view('tasks.form');
     }
-
 
     public function store(StoreTaskRequest $request)
     {
-        $data = $request->validated();
-        $data['user_id'] = $request->user()->id;
-        Task::create($data);
-
-
-        return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
+        Task::create(array_merge($request->validated(), ['user_id' => $request->user()->id]));
+        return redirect()->route('tasks.index')->with('success', 'Task created successfully');
     }
-
 
     public function edit(Task $task)
     {
-        if ($task->user_id !== auth()->id()) abort(403);
-        return view('tasks.form', ['task' => $task, 'action' => route('tasks.update', $task), 'method' => 'PUT']);
+        abort_unless($task->user_id === auth()->id(), 403);
+        return view('tasks.form', compact('task'));
     }
-
 
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        if ($task->user_id !== auth()->id()) abort(403);
+        abort_unless($task->user_id === auth()->id(), 403);
         $task->update($request->validated());
-        return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
+        return redirect()->route('tasks.index')->with('success', 'Task updated successfully');
     }
 
-
-    public function destroy(Request $request, Task $task)
+    public function destroy(Task $task)
     {
-        if ($task->user_id !== auth()->id()) abort(403);
+        abort_unless($task->user_id === auth()->id(), 403);
         $task->delete();
-        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
+        return back()->with('success', 'Task deleted successfully');
     }
 }
